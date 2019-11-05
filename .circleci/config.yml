@@ -16,7 +16,7 @@ jobs:
 
       - run:
           name: Deploying
-          command: eb deploy masters
+          command: eb deploy
 
 workflows:
   version: 2
