@@ -1,9 +1,31 @@
 version: 2
 jobs:
-  build:
+  deploy:
+    working_directory: /
     docker:
-      - image: circleci/node:10.16.0
+      - image: circleci/ruby:2.4.3
     steps:
       - checkout
-      - run: yarn install
-      - run: yarn start
+
+      - run:
+          name: Installing deployment dependencies
+          working_directory: /
+          command: |
+            sudo apt-get -y -qq update
+            sudo apt-get install python-pip python-dev build-essential
+            sudo pip install --upgrade setuptools
+            sudo pip install awsebcli --upgrade
+
+      - run:
+          name: Deploying
+          command: eb deploy masters
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - deploy:
+          filters:
+            branches:
+              only:
+                - master
